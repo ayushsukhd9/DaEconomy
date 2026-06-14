@@ -1,0 +1,15 @@
+name: DaEconomy
+main: DaEconomy\DaEconomy
+version: 1.0.0
+api: 5.0.0
+author: Atheria
+description: Modern economy plugin for PocketMine-MP 5
+
+commands:
+  money:
+    description: Check your balance
+    usage: "/money"
+
+permissions:
+  daeconomy.money:
+    default: true
