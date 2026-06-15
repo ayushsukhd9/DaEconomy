@@ -16,17 +16,17 @@ class AddMoneyCommand extends Command {
         $this->setPermission("daeconomy.command.admin");
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args): void {
+    public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
         if (count($args) < 2) {
             $sender->sendMessage(TextFormat::RED . "Usage: " . $this->getUsage());
-            return;
+            return false;
         }
 
         $amount = (int) $args[1];
         
         if ($amount <= 0) {
             $sender->sendMessage(TextFormat::RED . "Please enter a valid amount greater than zero.");
-            return;
+            return false;
         }
 
         $target = $this->plugin->getServer()->getPlayerByPrefix($args[0]);
@@ -36,5 +36,6 @@ class AddMoneyCommand extends Command {
         $sender->sendMessage(TextFormat::GREEN . "Successfully added " . $this->plugin->formatMoney($amount) . " to " . $realName);
         
         $target?->sendMessage(TextFormat::GREEN . "You received " . $this->plugin->formatMoney($amount) . ".");
+        return true;
     }
 }
