@@ -7,7 +7,7 @@ namespace DaEconomy\command;
 use DaEconomy\DaEconomy;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
-use pocketmine\utils\TextFormat as TF;
+use pocketmine\utils\TextFormat;
 
 class RemoveMoneyCommand extends Command {
 
@@ -16,27 +16,25 @@ class RemoveMoneyCommand extends Command {
         $this->setPermission("daeconomy.command.admin");
     }
 
-    public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
+    public function execute(CommandSender $sender, string $commandLabel, array $args): void {
         if (count($args) < 2) {
-            $sender->sendMessage(TF::RED . "Usage: " . $this->getUsage());
-            return false;
+            $sender->sendMessage(TextFormat::RED . "Usage: " . $this->getUsage());
+            return;
         }
 
         $amount = (int) $args[1];
         
         if ($amount <= 0) {
-            $sender->sendMessage(TF::RED . "Please enter a valid amount greater than zero.");
-            return false;
+            $sender->sendMessage(TextFormat::RED . "Please enter a valid amount greater than zero.");
+            return;
         }
 
         $target = $this->plugin->getServer()->getPlayerByPrefix($args[0]);
-        $realName = $target !== null ? $target->getName() : $args[0];
+        $realName = $target?->getName() ?? $args[0];
 
         $this->plugin->removeBalance($realName, $amount);
-        $sender->sendMessage(TF::GREEN . "Successfully removed " . $this->plugin->formatMoney($amount) . " from " . $realName);
+        $sender->sendMessage(TextFormat::GREEN . "Successfully removed " . $this->plugin->formatMoney($amount) . " from " . $realName);
         
-        $target?->sendMessage(TF::RED . $this->plugin->formatMoney($amount) . " was deducted from your balance.");
-        
-        return true;
+        $target?->sendMessage(TextFormat::RED . $this->plugin->formatMoney($amount) . " was deducted from your balance.");
     }
 }
