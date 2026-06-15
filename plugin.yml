@@ -1,31 +1,14 @@
 name: DaEconomy
 version: 1.0.0
-api: 5.0.0
+api: [5.0.0]
 main: DaEconomy\DaEconomy
 author: Atheria
-description: Modern economy plugin for PocketMine-MP 5
-
-commands:
-  money:
-    description: "Check your balance"
-    usage: "/money"
-    permission: "daeconomy.command.money"
-  addmoney:
-    description: "Add money to a player"
-    usage: "/addmoney <player> <amount>"
-    permission: "daeconomy.command.addmoney"
-  removemoney:
-    description: "Remove money from a player"
-    usage: "/removemoney <player> <amount>"
-    permission: "daeconomy.command.removemoney"
+description: A high-performance, strictly typed economy framework. 
 
 permissions:
   daeconomy.command.money:
-    description: "Allows use of /money"
     default: true
-  daeconomy.command.addmoney:
-    description: "Allows use of /addmoney"
+    description: Allows players to check balances.
+  daeconomy.command.admin:
     default: op
-  daeconomy.command.removemoney:
-    description: "Allows use of /removemoney"
-    default: op
+    description: Allows full administrative economy control.
