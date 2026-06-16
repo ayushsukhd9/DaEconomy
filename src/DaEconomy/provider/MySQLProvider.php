@@ -93,6 +93,15 @@ class MySQLProvider implements Provider {
         return true;
     }
 
+    public function loadAccount(string $xuid): void {
+        // Not needed for YAML
+    }
+
+    public function unloadAccount(string $xuid): void {
+        // Not needed for YAML
+    }
+
+
     public function reduceMoney(string $xuid, int $amount): bool {
         if (!$this->accountExists($xuid) || $amount <= 0) return false;
         if ($this->balances[$xuid] < $amount) return false;
