@@ -8,34 +8,36 @@ use DaEconomy\DaEconomy;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\player\Player;
-use pocketmine\utils\TextFormat;
+use pocketmine\utils\TextFormat as TF;
 
 class MoneyCommand extends Command {
 
     public function __construct(private DaEconomy $plugin) {
-        parent::__construct("money", "Check account balances", "/money [player]", []);
+        // This tells the server the name of the command, the description, and the usage
+        parent::__construct("money", "Check your bank balance", "/money", ["balance", "bal"]);
         $this->setPermission("daeconomy.command.money");
     }
 
-    // FIX: Back to : bool, otherwise PM5 completely crashes
     public function execute(CommandSender $sender, string $commandLabel, array $args): bool {
-        $targetName = $args[0] ?? null;
-
-        if ($targetName === null) {
-            if (!$sender instanceof Player) {
-                $sender->sendMessage(TextFormat::RED . "Please specify a player name from the console.");
-                return false;
-            }
-            $balance = $this->plugin->getBalance($sender->getName());
-            $sender->sendMessage(TextFormat::GREEN . "Your Balance: " . TextFormat::YELLOW . $this->plugin->formatMoney($balance));
-            return true;
+        // Security Check: Make sure a real player typed this, not the server console!
+        if (!$sender instanceof Player) {
+            $sender->sendMessage(TF::RED . "Only players in the game can check their balance.");
+            return false;
         }
 
-        $target = $this->plugin->getServer()->getPlayerByPrefix($targetName);
-        $realName = $target?->getName() ?? $targetName;
-        
-        $balance = $this->plugin->getBalance($realName);
-        $sender->sendMessage(TextFormat::GREEN . $realName . "'s Balance: " . TextFormat::YELLOW . $this->plugin->formatMoney($balance));
+        // Grab their permanent Xbox ID
+        $xuid = $sender->getXuid();
+
+        // If they don't have an account yet, create one for them instantly
+        if (!$this->plugin->getProvider()->accountExists($xuid)) {
+            $this->plugin->getProvider()->createAccount($xuid, 1000);
+        }
+
+        // Fetch their exact balance from our database engine
+        $balance = $this->plugin->getProvider()->getMoney($xuid);
+
+        // Send them the beautifully formatted message
+        $sender->sendMessage(TF::GREEN . "Your Balance: " . TF::YELLOW . "$" . number_format((float)$balance));
         return true;
     }
 }
